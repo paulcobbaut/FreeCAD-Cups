@@ -47,8 +47,6 @@ def create_cup(ml, cup_name, dir_name):
     cup.Base = cup_outer
     cup.Tool = cup_inner
 
-    doc.recompute()
-
     # rotate 180 degrees so open end is on top in slicer
     Draft.rotate([doc.cup], 180.0, FreeCAD.Vector(0, 0, 0), axis=FreeCAD.Vector(0, -1, 0), copy=False)
 
@@ -80,22 +78,12 @@ def create_cup(ml, cup_name, dir_name):
     doc.removeObject("sketch_outer")
 
 
-
 for i in range(25):
     ml = i + 1
     create_cup(ml       , str(ml) + 'ml' + '=' + str(ml)        + 'ml', 'millilitre')
     create_cup(ml * 10  , str(ml) + 'cl' + '=' + str(ml * 10)   + 'ml', 'centilitre')
     create_cup(ml * 100 , str(ml) + 'dl' + '=' + str(ml * 100)  + 'ml', 'decilitre')
     create_cup(ml * 1000, str(ml) + 'l'  + '=' + str(ml * 1000) + 'ml', 'litre')
-
-"""
-create_cup(750, "750 ml", "quarters")
-create_cup(250, "250 ml", "quarters")
-create_cup(150, "150 ml", "quarters")
-create_cup(75, "75 ml", "quarters")
-create_cup(25, "25 ml", "quarters")
-create_cup(15, "10 ml", "quarters")
-"""
 
 
 FreeCADGui.ActiveDocument.ActiveView.fitAll()
