@@ -50,38 +50,41 @@ def create_cup(ml, cup_name, dir_name):
     # rotate 180 degrees so open end is on top in slicer
     Draft.rotate([doc.cup], 180.0, FreeCAD.Vector(0, 0, 0), axis=FreeCAD.Vector(0, -1, 0), copy=False)
 
+    # Create Shapestring
+    ss=Draft.makeShapeString(String=ml,FontFile="/home/paul/FreeCAD models/cups_python/Vera.ttf",Size=(radius/2),Tracking=0.0)
+    # Vertical side placement
+    #ss.Placement = App.Placement(App.Vector(50,0,0),App.Rotation(App.Vector(0,1,0),90))
+    # Bottom side placement
+    ss.Placement = App.Placement(App.Vector(-(radius/2),0,-height),App.Rotation(App.Vector(1,0,0),0))
+    ss.Support=None
+    Draft.autogroup(ss)
+
+    # Extrude ShapeString
+    extrude=doc.addObject('Part::Extrusion','extrude')
+    extrude.Base = doc.getObject('ShapeString')
+    extrude.LengthFwd = 0.5
+    extrude.Placement = App.Placement(App.Vector(0,0,wall-0.5),App.Rotation(App.Vector(1,0,0),0))
+    doc.getObject('ShapeString').Visibility = False
+
+    # substract extrude from cup
+    mcup = doc.addObject('Part::Cut', "mcup")
+    mcup.Base = cup
+    mcup.Tool = extrude
+
     # create rounded cup
     doc.addObject("Part::Fillet","fillet")
-    doc.fillet.Base = cup 
+    doc.fillet.Base = mcup
     __fillets__ = []
     __fillets__.append((2,1.00,1.00))
     __fillets__.append((3,1.00,1.00))
     __fillets__.append((4,1.00,1.00))
     doc.fillet.Edges = __fillets__
 
-    # Create Shapestring
-    ss=Draft.makeShapeString(String=cup_name,FontFile="/home/paul/FreeCAD models/magic doosjes/font/Vera.ttf",Size=10.0,Tracking=0.0)
-    # Vertical side placement
-    #ss.Placement = App.Placement(App.Vector(50,0,0),App.Rotation(App.Vector(0,1,0),90))
-    # Bottom side placement
-    ss.Placement = App.Placement(App.Vector(0,0,-height),App.Rotation(App.Vector(1,0,0),0))
-    ss.Support=None
-    Draft.autogroup(ss)
-
-    # Extrude ShapeString
-    extrude=doc.addObject('Part::Extrusion','Extrude')
-    extrude.Base = doc.getObject('ShapeString')
-    extrude.LengthFwd = 0.5
-    extrude.Placement = App.Placement(App.Vector(0,0,wall-0.5),App.Rotation(App.Vector(1,0,0),0))
-    doc.getObject('ShapeString').Visibility = False
-
     doc.recompute()
-
-    error
 
     # export .stl files for this cup and this rounded cup
     export = []
-    export.append(doc.getObject("cup"))
+    export.append(doc.getObject("mcup"))
     Mesh.export(export, u"/home/paul/FreeCAD models/cups_python/" + dir_name + "/sharp measuring cup " + cup_name + ".stl")
     export = []
     export.append(doc.getObject("fillet"))
@@ -89,7 +92,10 @@ def create_cup(ml, cup_name, dir_name):
 
 
     # remove all objects
+    doc.removeObject("extrude")
+    doc.removeObject("ShapeString")
     doc.removeObject("fillet")
+    doc.removeObject("mcup")
     doc.removeObject("cup")
     doc.removeObject("cup_inner")
     doc.removeObject("cup_outer")
@@ -97,14 +103,15 @@ def create_cup(ml, cup_name, dir_name):
     doc.removeObject("sketch_outer")
 
 """
-for i in range(25):
-    ml = i + 1
-    create_cup(ml       , str(ml) + 'ml' + '=' + str(ml)        + 'ml', 'millilitre')
+for i in range(2):
+    ml = i + 5
+    create_cup(ml       , str(ml) + 'ml'                              , 'millilitre')
     create_cup(ml * 10  , str(ml) + 'cl' + '=' + str(ml * 10)   + 'ml', 'centilitre')
     create_cup(ml * 100 , str(ml) + 'dl' + '=' + str(ml * 100)  + 'ml', 'decilitre')
     create_cup(ml * 1000, str(ml) + 'l'  + '=' + str(ml * 1000) + 'ml', 'litre')
 """
 
-create_cup(500, "liter", "test")
+create_cup(42, "42ml", "millilitre")
+create_cup(84, "84ml", "millilitre")
 
 FreeCADGui.ActiveDocument.ActiveView.fitAll()
