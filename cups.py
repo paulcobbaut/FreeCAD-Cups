@@ -59,7 +59,25 @@ def create_cup(ml, cup_name, dir_name):
     __fillets__.append((4,1.00,1.00))
     doc.fillet.Edges = __fillets__
 
+    # Create Shapestring
+    ss=Draft.makeShapeString(String=cup_name,FontFile="/home/paul/FreeCAD models/magic doosjes/font/Vera.ttf",Size=10.0,Tracking=0.0)
+    # Vertical side placement
+    #ss.Placement = App.Placement(App.Vector(50,0,0),App.Rotation(App.Vector(0,1,0),90))
+    # Bottom side placement
+    ss.Placement = App.Placement(App.Vector(0,0,-height),App.Rotation(App.Vector(1,0,0),0))
+    ss.Support=None
+    Draft.autogroup(ss)
+
+    # Extrude ShapeString
+    extrude=doc.addObject('Part::Extrusion','Extrude')
+    extrude.Base = doc.getObject('ShapeString')
+    extrude.LengthFwd = 0.5
+    extrude.Placement = App.Placement(App.Vector(0,0,wall-0.5),App.Rotation(App.Vector(1,0,0),0))
+    doc.getObject('ShapeString').Visibility = False
+
     doc.recompute()
+
+    error
 
     # export .stl files for this cup and this rounded cup
     export = []
@@ -69,6 +87,7 @@ def create_cup(ml, cup_name, dir_name):
     export.append(doc.getObject("fillet"))
     Mesh.export(export, u"/home/paul/FreeCAD models/cups_python/" + dir_name + "/rounded measuring cup " + cup_name + ".stl")
 
+
     # remove all objects
     doc.removeObject("fillet")
     doc.removeObject("cup")
@@ -77,13 +96,15 @@ def create_cup(ml, cup_name, dir_name):
     doc.removeObject("sketch_inner")
     doc.removeObject("sketch_outer")
 
-
+"""
 for i in range(25):
     ml = i + 1
     create_cup(ml       , str(ml) + 'ml' + '=' + str(ml)        + 'ml', 'millilitre')
     create_cup(ml * 10  , str(ml) + 'cl' + '=' + str(ml * 10)   + 'ml', 'centilitre')
     create_cup(ml * 100 , str(ml) + 'dl' + '=' + str(ml * 100)  + 'ml', 'decilitre')
     create_cup(ml * 1000, str(ml) + 'l'  + '=' + str(ml * 1000) + 'ml', 'litre')
+"""
 
+create_cup(500, "liter", "test")
 
 FreeCADGui.ActiveDocument.ActiveView.fitAll()
