@@ -19,6 +19,14 @@ obj = doc.addObject("PartDesign::Body", "Body")
 
 def create_cup(ml, cup_name, dir_name):
 
+    # font file location
+    # adjust this path according to the location of this font on your PC
+    my_font_file = '/home/paul/FreeCAD models/cups_python/Vera.ttf'
+
+    # export files location
+    # this directory should contain four subdirectories named litre, decilitre, centilitre, millilitre
+    my_export_dir = u"/home/paul/FreeCAD models/cups_python/"
+
     # create sketches that will contain the inner and outer circle of the cup
     # the inner circle will form a cylinder with the exact millilitre contents
     # the inner cylinder is later substracted from the outer cylinder to form a cup
@@ -59,7 +67,7 @@ def create_cup(ml, cup_name, dir_name):
 
     # Create Shapestring that contains the number of millilitre
     # fontsize is set to half the radius, most numbers will fit the bottom of the cup
-    ss=Draft.makeShapeString(String=ml,FontFile="/home/paul/FreeCAD models/cups_python/Vera.ttf",Size=(radius/2),Tracking=0.0)
+    ss=Draft.makeShapeString(String=str(ml),FontFile=my_font_file,Size=(radius/2),Tracking=0.0)
     # Place at the bottom
     # The X-value here is a weak attempt to center the shapestring on the bottom
     # +5 is only significant for the very small cups
@@ -100,10 +108,10 @@ def create_cup(ml, cup_name, dir_name):
     # export .stl files for this sharp mcup and this rounded fillet
     export = []
     export.append(doc.getObject("mcup"))
-    Mesh.export(export, u"/home/paul/FreeCAD models/cups_python/" + dir_name + "/sharp measuring cup " + cup_name + ".stl")
+    Mesh.export(export, my_export_dir + dir_name + "/sharp measuring cup " + cup_name + ".stl")
     export = []
     export.append(doc.getObject("fillet"))
-    Mesh.export(export, u"/home/paul/FreeCAD models/cups_python/" + dir_name + "/rounded measuring cup " + cup_name + ".stl")
+    Mesh.export(export, my_export_dir + dir_name + "/rounded measuring cup " + cup_name + ".stl")
 
     # remove all objects before the next for loop
     # FreeCAD should be almost empty when this script finishes
