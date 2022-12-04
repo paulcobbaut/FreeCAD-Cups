@@ -11,6 +11,7 @@ import Draft
 import Part
 import Sketcher
 import math
+import Mesh
 
 # FreeCAD document
 doc = FreeCAD.newDocument("Cups")
