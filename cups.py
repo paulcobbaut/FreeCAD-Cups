@@ -17,7 +17,6 @@ import Mesh
 doc = FreeCAD.newDocument("Cups")
 obj = doc.addObject("PartDesign::Body", "Body")
 
-
 def create_cup(ml, cup_name, dir_name):
 
     # font file location
@@ -141,4 +140,5 @@ for i in range(25):
 # for testing individual cup creation
 #create_cup(42, "42ml", "millilitre")
 
-FreeCADGui.ActiveDocument.ActiveView.fitAll()
+# for testing intermediate results in the FreeCAD GUI
+#FreeCADGui.ActiveDocument.ActiveView.fitAll()
