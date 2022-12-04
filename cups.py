@@ -63,23 +63,23 @@ def create_cup(ml, cup_name, dir_name):
     cup.Tool = cup_inner
 
     # rotate 180 degrees so open end is on top in slicer
-    Draft.rotate([doc.cup], 180.0, FreeCAD.Vector(0, 0, 0), axis=FreeCAD.Vector(0, -1, 0), copy=False)
+    Draft.rotate([doc.cup], 180.0, FreeCAD.Vector(0, 0, 0), axis = FreeCAD.Vector(0, -1, 0), copy = False)
 
     # Create Shapestring that contains the number of millilitre
     # fontsize is set to half the radius, most numbers will fit the bottom of the cup
-    ss=Draft.makeShapeString(String=str(ml),FontFile=my_font_file,Size=(radius/2),Tracking=0.0)
+    ss = Draft.makeShapeString(String = str(ml), FontFile = my_font_file, Size = (radius/2), Tracking = 0.0)
     # Place at the bottom
     # The X-value here is a weak attempt to center the shapestring on the bottom
     # +5 is only significant for the very small cups
     # -radius/1.1 is reasonable for large cups
     ss.Placement = App.Placement(App.Vector(5-(radius/1.1),0,-height),App.Rotation(App.Vector(1,0,0),0))
-    ss.Support=None
+    ss.Support = None
     Draft.autogroup(ss)
 
     # Extrude the ShapeString
     # Later this extrude is subtracted from the cup
     # Yes this means the contents is no longer exact, so don't fill the top 0.02mm or something :)
-    extrude=doc.addObject('Part::Extrusion','extrude')
+    extrude = doc.addObject('Part::Extrusion','extrude')
     extrude.Base = doc.getObject('ShapeString')
     extrude.LengthFwd = 0.5
     extrude.Placement = App.Placement(App.Vector(0,0,wall-0.5),App.Rotation(App.Vector(1,0,0),0))
