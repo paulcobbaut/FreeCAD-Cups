@@ -73,7 +73,9 @@ def create_cup(ml, cup_name, dir_name):
     # The X-value here is a weak attempt to center the shapestring on the bottom
     # +5 is only significant for the very small cups
     # -radius/1.1 is reasonable for large cups
-    ss.Placement = App.Placement(App.Vector(5-(radius/1.1),0,-height),App.Rotation(App.Vector(1,0,0),0))
+    pos = FreeCAD.Vector(5-(radius/1.1),0,-height)
+    rot = FreeCAD.Rotation(FreeCAD.Vector(1,0,0),0)
+    ss.Placement = App.Placement(pos, rot)
     ss.Support = None
     Draft.autogroup(ss)
 
@@ -83,7 +85,9 @@ def create_cup(ml, cup_name, dir_name):
     extrude = doc.addObject('Part::Extrusion','extrude')
     extrude.Base = doc.getObject('ShapeString')
     extrude.LengthFwd = 0.5
-    extrude.Placement = App.Placement(App.Vector(0,0,wall-0.5),App.Rotation(App.Vector(1,0,0),0))
+    pos = FreeCAD.Vector(0,0,wall-0.5)
+    rot = FreeCAD.Rotation(App.Vector(1,0,0),0)
+    extrude.Placement = App.Placement(pos, rot)
     doc.getObject('ShapeString').Visibility = False
 
     # substract extrude from cup
@@ -98,11 +102,11 @@ def create_cup(ml, cup_name, dir_name):
     # the bottom inside is NOT rounded
     doc.addObject("Part::Fillet","fillet")
     doc.fillet.Base = mcup
-    __fillets__ = []
-    __fillets__.append((2,1.00,1.00))
-    __fillets__.append((3,1.00,1.00))
-    __fillets__.append((4,1.00,1.00))
-    doc.fillet.Edges = __fillets__
+    edge_list = []
+    edge_list.append((2,1.00,1.00))
+    edge_list.append((3,1.00,1.00))
+    edge_list.append((4,1.00,1.00))
+    doc.fillet.Edges = edge_list
 
     doc.recompute()
 
